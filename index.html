@@ -178,6 +178,52 @@ select.input-field option{background:var(--bg2)}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
+
+/* ========== 移动端响应式 ========== */
+#menu-toggle{display:none;width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-size:18px;align-items:center;justify-content:center;flex-shrink:0}
+#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99;backdrop-filter:blur(2px)}
+#sidebar-overlay.show{display:block}
+
+@media(max-width:768px){
+  :root{--header:52px}
+  body{overflow:hidden}
+  #sidebar{
+    position:fixed;left:0;top:0;bottom:0;width:260px;
+    transform:translateX(-100%);
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+    z-index:100;overflow-y:auto;
+  }
+  #sidebar.open{transform:translateX(0)}
+  #menu-toggle{display:flex}
+  .topbar-search{display:none}
+  #topbar{padding:0 14px;gap:10px}
+  .topbar-title{font-size:15px}
+  #main{width:100%}
+  #content{padding:14px}
+  .grid-4{grid-template-columns:repeat(2,1fr);gap:12px}
+  .grid-3{grid-template-columns:1fr;gap:12px}
+  .grid-2{grid-template-columns:1fr;gap:12px}
+  .editor-wrap{grid-template-columns:1fr;height:auto}
+  .editor-sidebar{max-height:260px}
+  .editor-main{min-height:320px}
+  .template-grid{grid-template-columns:repeat(2,1fr)}
+  .plan-cards{grid-template-columns:1fr}
+  .stat-val{font-size:22px}
+  .stat-card{padding:16px}
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{min-width:520px}
+  .modal{width:100vw;max-width:100vw;max-height:90vh;border-radius:16px 16px 0 0;position:fixed;bottom:0;left:0;right:0;margin:0}
+  .modal-overlay{align-items:flex-end}
+  #toast-container{top:auto;bottom:24px;right:12px;left:12px;align-items:center}
+  .toast{max-width:100%}
+  .card{padding:14px}
+  .chart-box{padding:14px}
+}
+@media(max-width:400px){
+  .template-grid{grid-template-columns:1fr}
+  .stat-val{font-size:20px}
+  #content{padding:10px}
+}
 </style>
 </head>
 <body>
@@ -218,9 +264,13 @@ select.input-field option{background:var(--bg2)}
   </div>
 </div>
 
+<!-- SIDEBAR OVERLAY -->
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
+
 <!-- MAIN -->
 <div id="main">
   <div id="topbar">
+    <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
     <div class="topbar-title" id="page-title">数据看板</div>
     <input class="topbar-search" placeholder="🔍 搜索功能、内容、评论..." id="searchInput" onkeydown="if(event.key==='Enter')showToast('搜索：'+this.value,'info')">
     <button class="topbar-btn" onclick="switchPage('topics',document.querySelectorAll('.nav-item')[3])">💡</button>
@@ -260,7 +310,7 @@ select.input-field option{background:var(--bg2)}
   <div class="divider"></div>
   <div class="section-title"><span>🔥 近期内容表现</span><button class="btn btn-secondary" onclick="showToast('正在加载更多','info')">查看全部</button></div>
   <div class="card">
-    <table>
+    <div class="table-wrap"><table>
       <thead><tr><th>内容标题</th><th>平台</th><th>发布时间</th><th>播放量</th><th>点赞</th><th>互动率</th><th>操作</th></tr></thead>
       <tbody>
         <tr><td><strong>🌟 平价彩妆大测评｜10款口红对比</strong></td><td><span class="tag purple">抖音</span></td><td style="color:var(--text3)">03-28</td><td><strong>324万</strong></td><td>8.7万</td><td style="color:var(--green)">2.85%</td><td><button class="btn btn-secondary" style="padding:4px 10px;font-size:12px" onclick="openModal('modal-analysis')">分析</button></td></tr>
@@ -268,7 +318,7 @@ select.input-field option{background:var(--bg2)}
         <tr><td>学生党平价眼影盘合集</td><td><span class="tag pink">小红书</span></td><td style="color:var(--text3)">03-22</td><td>156万</td><td>5.6万</td><td style="color:var(--green)">4.21%</td><td><button class="btn btn-secondary" style="padding:4px 10px;font-size:12px" onclick="openModal('modal-analysis')">分析</button></td></tr>
         <tr><td>夏季防晒霜测评｜买它！</td><td><span class="tag purple">抖音</span></td><td style="color:var(--text3)">03-18</td><td>201万</td><td>4.1万</td><td style="color:var(--accent)">2.12%</td><td><button class="btn btn-secondary" style="padding:4px 10px;font-size:12px" onclick="openModal('modal-analysis')">分析</button></td></tr>
       </tbody>
-    </table>
+    </table></div>
   </div>
 </div>
 
@@ -293,7 +343,7 @@ select.input-field option{background:var(--bg2)}
   <div class="grid-2">
     <div class="card">
       <div class="card-title">🏆 热门内容 TOP 5</div>
-      <table>
+      <div class="table-wrap"><table>
         <thead><tr><th>#</th><th>标题</th><th>播放量</th><th>增幅</th></tr></thead>
         <tbody>
           <tr><td style="color:var(--accent3);font-weight:700">1</td><td>平价彩妆大测评</td><td>324万</td><td style="color:var(--red)">↑45%</td></tr>
@@ -302,7 +352,7 @@ select.input-field option{background:var(--bg2)}
           <tr><td>4</td><td>春季护肤必备</td><td>87万</td><td style="color:var(--green)">↓3%</td></tr>
           <tr><td>5</td><td>底妆教程·零基础入门</td><td>72万</td><td style="color:var(--green)">↓8%</td></tr>
         </tbody>
-      </table>
+      </table></div>
     </div>
     <div class="chart-box" style="margin-bottom:0">
       <div class="chart-header"><span class="chart-title">⏰ 最佳发布时间</span></div>
@@ -548,7 +598,7 @@ select.input-field option{background:var(--bg2)}
   <div class="chart-box"><div class="chart-header"><span class="chart-title">💹 收入趋势（近6个月）</span></div><div id="incomeChart" style="height:250px"></div></div>
   <div class="card">
     <div class="card-title">📋 收入明细</div>
-    <table>
+    <div class="table-wrap"><table>
       <thead><tr><th>日期</th><th>来源</th><th>品牌/平台</th><th>金额</th><th>状态</th><th>操作</th></tr></thead>
       <tbody>
         <tr><td>2026-03-28</td><td>商单合作</td><td>花知晓品牌</td><td style="color:var(--green);font-weight:700">+¥6,800</td><td><span class="tag green">已到账</span></td><td><button class="btn btn-secondary" style="font-size:12px;padding:4px 10px" onclick="showToast('查看发票','info')">发票</button></td></tr>
@@ -556,7 +606,7 @@ select.input-field option{background:var(--bg2)}
         <tr><td>2026-03-20</td><td>商单合作</td><td>薇诺娜</td><td style="color:var(--accent3);font-weight:700">¥12,000</td><td><span class="tag p1">待结算</span></td><td><button class="btn btn-secondary" style="font-size:12px;padding:4px 10px" onclick="showToast('已申请结算','success')">申请结算</button></td></tr>
         <tr><td>2026-03-15</td><td>带货佣金</td><td>淘宝联盟</td><td style="color:var(--green);font-weight:700">+¥2,180</td><td><span class="tag green">已到账</span></td><td><button class="btn btn-secondary" style="font-size:12px;padding:4px 10px" onclick="showToast('查看佣金明细','info')">详情</button></td></tr>
       </tbody>
-    </table>
+    </table></div>
   </div>
 </div>
 
@@ -689,6 +739,16 @@ select.input-field option{background:var(--bg2)}
 <script>
 const pageTitles={dashboard:'数据看板',analytics:'流量分析',comments:'评论分析',topics:'AI 选题推荐',script:'AI 脚本创作',templates:'脚本模板库',deals:'商单广场',member:'会员中心',income:'收入管理',notifications:'通知中心',settings:'系统设置'};
 
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  const ov=document.getElementById('sidebar-overlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('show');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('show');
+}
 function switchPage(id,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -697,6 +757,7 @@ function switchPage(id,el){
   if(el)el.classList.add('active');
   document.getElementById('page-title').textContent=pageTitles[id]||id;
   setTimeout(()=>initCharts(id),80);
+  closeSidebar();
 }
 
 function openModal(id){document.getElementById(id).classList.add('show')}
